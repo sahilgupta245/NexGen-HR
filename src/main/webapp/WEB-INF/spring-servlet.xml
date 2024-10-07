@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+  xmlns:ss="http://www.springframework.org/schema/security"
+  xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:tx="http://www.springframework.org/schema/tx"
+ 
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+    http://www.springframework.org/schema/jdbc
+    http://www.springframework.org/schema/jdbc/spring-jdbc-4.2.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-4.2.xsd
+    http://www.springframework.org/schema/security
+    http://www.springframework.org/schema/security/spring-security-5.4.xsd
+    http://www.springframework.org/schema/tx
+    http://www.springframework.org/schema/tx/spring-tx.xsd" >
+    
+    <tx:annotation-driven/>
+    <context:component-scan base-package="springempcrud" />
+
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/views/"/>
+		<property name="suffix" value=".jsp"/>
+	</bean>
+	
+	 <bean id="ds" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+    	<property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
+    	<property name="url" value="jdbc:mysql://localhost:3306/employee"/>
+    	<property name="username" value="root"/>
+    	<property name="password" value="8920664313"/>
+    </bean>
+    
+    <bean id="factory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+    	<!-- data source -->
+    	<property name="dataSource" ref="ds"/>
+    	<!-- hibernate property -->
+    	<property name="hibernateProperties">
+    		<props>
+    			<prop key="hibernate.dialect">org.hibernate.dialect.MySQL57Dialect</prop>
+    			<prop key="hibernate.show_sql">true</prop>
+    			<prop key="hibernate.hbm2ddl.auto">update</prop>
+    			<prop key="hibernate.formate_sql">true</prop>
+    		</props>
+    	</property>
+    	<!-- annotated class -->
+    	<property name="annotatedClasses">
+    		<list>
+    			<value>springempcrud.entity.Employee</value>
+    		</list>
+    	</property>
+    </bean>
+    
+    <bean id="hibernateTemplate" class="org.springframework.orm.hibernate5.HibernateTemplate">
+    	<property name="sessionFactory" ref="factory"/>
+    </bean>
+
+	<bean id="employeeDao" class="springempcrud.dao.EmployeeDaoImpl">
+		<property name="hibernateTemplate" ref="hibernateTemplate" />
+	</bean>
+	
+	<bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+		<property name="sessionFactory" ref="factory"/>
+	</bean>
+    
+  </beans>  
